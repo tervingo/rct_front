@@ -6,6 +6,7 @@ import RecipeList from './components/RecipeList';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import EditRecipeForm from './components/EditRecipeForm';
 
 function App() {
   const handleSubmit = async (formData) => {
@@ -45,7 +46,15 @@ function App() {
     <Router>
       <div className="app">
         <nav className="navbar">
-          <div className="navbar-brand">Recetarium</div>
+          <div className="navbar-brand">
+            Recetarium
+            <img 
+              src="/images/cuchara.png" 
+              alt="Cuchara" 
+              className="navbar-logo"
+            />
+            </div>
+
           <div className="navbar-links">
             <Link to="/">Inicio</Link>
             <Link to="/new">Nueva receta</Link>
@@ -57,7 +66,7 @@ function App() {
             <Route path="/" element={<RecipeList />} />
             <Route path="/new" element={<RecipeForm onSubmit={handleSubmit} />} />
             <Route path="/recipe/:id" element={<div>Detalles de la receta (próximamente)</div>} />
-            <Route path="/recipe/:id/edit" element={<RecipeForm onSubmit={handleSubmit} />} />
+            <Route path="/recipe/:id/edit" element={<EditRecipeForm />} />
           </Routes>
         </main>
 
