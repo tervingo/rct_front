@@ -15,7 +15,7 @@ function App() {
       // Show loading toast
       const loadingToast = toast.loading("Guardando receta...");
       
-      const response = await axios.post('http://localhost:8000/recipes/', formData);
+      const response = await axios.post('https://recetarium-back.onrender.com/recipes/', formData);
       
       // Update loading toast to success
       toast.update(loadingToast, {

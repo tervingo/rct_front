@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = 'https://recetarium-back.onrender.com';
 
 function RecipeDetail() {
   const { id } = useParams();
@@ -11,11 +11,7 @@ function RecipeDetail() {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchRecipe();
-  }, [id]);
-
-  const fetchRecipe = async () => {
+  const fetchRecipe = useCallback(async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/recipes/${id}`);
       setRecipe(response.data);
@@ -25,7 +21,11 @@ function RecipeDetail() {
       toast.error('Error al cargar la receta');
       navigate('/');
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchRecipe();
+  }, [fetchRecipe]);
 
   const handleDelete = async () => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta receta?')) {

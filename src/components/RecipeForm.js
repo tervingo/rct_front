@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = 'https://recetarium-back.onrender.com';
+
 const CATEGORIES = [
   "Aperitivos",
   "Tapas y Pinchos",
@@ -154,7 +156,7 @@ const RecipeForm = ({ recipe, onSubmit }) => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:8000/upload-image/', formData, {
+      const response = await axios.post(`${BACKEND_URL}/upload-image/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

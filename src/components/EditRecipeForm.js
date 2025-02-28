@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = 'https://recetarium-back.onrender.com';
 
 const EditRecipeForm = () => {
   const { id } = useParams();
@@ -24,11 +24,7 @@ const EditRecipeForm = () => {
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
 
-  useEffect(() => {
-    fetchRecipe();
-  }, [id]);
-
-  const fetchRecipe = async () => {
+  const fetchRecipe = useCallback(async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/recipes/${id}`);
       setFormData(response.data);
@@ -41,7 +37,11 @@ const EditRecipeForm = () => {
       toast.error('Error al cargar la receta');
       navigate('/');
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchRecipe();
+  }, [fetchRecipe]);
 
   const validateForm = () => {
     const newErrors = {};
