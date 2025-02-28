@@ -65,7 +65,15 @@ const RecipeList = () => {
         ) : (
           recipes.map((recipe) => (
             <div key={recipe.id} className="recipe-card">
+              {recipe.image_path && (
+                <div className="recipe-image">
+                  <img src={`http://localhost:8000${recipe.image_path}`} alt={recipe.title} />
+                </div>
+              )}
               <h3>{recipe.title}</h3>
+              {recipe.comment && (
+                <p className="recipe-comment">{recipe.comment}</p>
+              )}
               <p className="recipe-description">{recipe.description}</p>
               <div className="recipe-meta">
                 <span>🕒 {recipe.cooking_time} minutos</span>
@@ -74,6 +82,13 @@ const RecipeList = () => {
               <div className="recipe-category">
                 <span>📑 {recipe.category}</span>
               </div>
+              {recipe.tags && recipe.tags.length > 0 && (
+                <div className="recipe-tags">
+                  {recipe.tags.map(tag => (
+                    <span key={tag} className="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
               <div className="recipe-actions">
                 <Link to={`/recipe/${recipe.id}`} className="btn btn-secondary">
                   Ver

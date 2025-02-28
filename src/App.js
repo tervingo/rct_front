@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
+import RecipeDetail from './components/RecipeDetail';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -47,7 +48,7 @@ function App() {
       <div className="app">
         <nav className="navbar">
           <div className="navbar-brand">
-            Recetarium
+            Cuchara de palo
             <img 
               src="/images/cuchara.png" 
               alt="Cuchara" 
@@ -65,7 +66,7 @@ function App() {
           <Routes>
             <Route path="/" element={<RecipeList />} />
             <Route path="/new" element={<RecipeForm onSubmit={handleSubmit} />} />
-            <Route path="/recipe/:id" element={<div>Detalles de la receta (próximamente)</div>} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
             <Route path="/recipe/:id/edit" element={<EditRecipeForm />} />
           </Routes>
         </main>

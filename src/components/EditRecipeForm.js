@@ -16,10 +16,13 @@ const EditRecipeForm = () => {
     instructions: [''],
     cooking_time: 0,
     servings: 1,
-    category: ''
+    category: '',
+    comment: '',
+    image_path: ''
   });
 
   const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchRecipe();
@@ -29,6 +32,9 @@ const EditRecipeForm = () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/recipes/${id}`);
       setFormData(response.data);
+      if (response.data.image_path) {
+        setImagePreview(`${BACKEND_URL}${response.data.image_path}`);
+      }
       setLoading(false);
     } catch (error) {
       console.error('Error al cargar la receta:', error);
@@ -110,6 +116,53 @@ const EditRecipeForm = () => {
     setFormData({ ...formData, instructions: newInstructions });
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecciona un archivo de imagen válido');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/upload-image/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setFormData(prev => ({
+        ...prev,
+        image_path: response.data.image_path
+      }));
+
+      toast.success('Imagen actualizada correctamente');
+    } catch (error) {
+      console.error('Error al subir la imagen:', error);
+      toast.error('Error al subir la imagen');
+    }
+  };
+
+  const handleRemoveImage = () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar la imagen?')) {
+      setImagePreview(null);
+      setFormData(prev => ({
+        ...prev,
+        image_path: ''
+      }));
+    }
+  };
+
   if (loading) {
     return <div className="loading">Cargando receta...</div>;
   }
@@ -139,6 +192,16 @@ const EditRecipeForm = () => {
           required
         />
         {errors.description && <span className="error-message">{errors.description}</span>}
+      </div>
+
+      <div className="form-group">
+        <label>Comentario:</label>
+        <textarea
+          value={formData.comment}
+          onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+          className="form-input"
+          rows={4}
+        />
       </div>
 
       <div className="form-group">
@@ -250,6 +313,42 @@ const EditRecipeForm = () => {
           required
         />
         {errors.category && <span className="error-message">{errors.category}</span>}
+      </div>
+
+      <div className="form-group">
+        <label>Imagen de la receta:</label>
+        <div className="image-upload-container">
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Preview" />
+              <button 
+                type="button" 
+                onClick={handleRemoveImage}
+                className="btn btn-danger btn-remove-image"
+              >
+                Eliminar imagen
+              </button>
+            </div>
+          )}
+          <div className="custom-file-upload">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              id="file-upload"
+              className="hidden-file-input"
+            />
+            <label htmlFor="file-upload" className="btn btn-secondary file-upload-btn">
+              <i className="fas fa-camera"></i>
+              {imagePreview ? 'Cambiar imagen' : 'Seleccionar imagen'}
+            </label>
+            <small className="image-help-text">
+              {imagePreview 
+                ? "Haz clic en el botón para seleccionar una nueva imagen" 
+                : "Formato: JPG, PNG (Máx. 5MB)"}
+            </small>
+          </div>
+        </div>
       </div>
 
       <div className="form-actions">
