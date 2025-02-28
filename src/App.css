@@ -21,9 +21,16 @@
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: bold;;
   color: var(--primary-color);
+}
+
+.navbar-logo-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3rem;
 }
 
 .navbar-links {

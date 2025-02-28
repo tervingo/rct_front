@@ -48,13 +48,16 @@ function App() {
       <div className="app">
         <nav className="navbar">
           <div className="navbar-brand">
-            Cuchara de palo
-            <img 
-              src="/images/cuchara.png" 
-              alt="Cuchara" 
-              className="navbar-logo"
-            />
+            <div className="navbar-logo-container">
+            Recetarium
+
+              <img 
+                src="/images/cuchara.png" 
+                alt="Cuchara" 
+                className="navbar-logo"
+              />
             </div>
+          </div>
 
           <div className="navbar-links">
             <Link to="/">Inicio</Link>
