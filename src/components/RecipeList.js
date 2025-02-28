@@ -54,7 +54,7 @@ const RecipeList = () => {
 
   return (
     <div className="recipe-list">
-      <h2>Mis Recetas</h2>
+      <h2 className='recipe-list-title'>Lista de recetas</h2>
       <Link to="/new" className="btn btn-primary add-recipe-btn">
         Añadir Nueva Receta
       </Link>
@@ -74,7 +74,7 @@ const RecipeList = () => {
               <p className="recipe-description">{recipe.description}</p>
               <div className="recipe-meta">
                 <span>🕒 {recipe.cooking_time} minutos</span>
-                <span>👥 {recipe.servings} porciones</span>
+                <span>👥 {recipe.servings} personas</span>
               </div>
               <div className="recipe-category">
                 <span>📑 {recipe.category}</span>

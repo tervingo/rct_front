@@ -72,7 +72,7 @@ function RecipeDetail() {
 
       <div className="recipe-meta">
         <span><i className="fas fa-clock"></i> {recipe.cooking_time} minutos</span>
-        <span><i className="fas fa-users"></i> {recipe.servings} porciones</span>
+        <span><i className="fas fa-users"></i> {recipe.servings} personas</span>
         <span><i className="fas fa-tag"></i> {recipe.category}</span>
       </div>
 

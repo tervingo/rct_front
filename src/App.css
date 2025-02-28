@@ -55,6 +55,13 @@
   padding: 2rem;
 }
 
+.recipe-list-title {
+  color: silver;
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
 .recipe-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
