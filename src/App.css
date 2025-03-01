@@ -36,6 +36,7 @@
 .navbar-links {
   display: flex;
   gap: 2rem;
+  font-size: 1.3rem;
 }
 
 .navbar-links a {

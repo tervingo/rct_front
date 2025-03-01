@@ -283,7 +283,7 @@ const RecipeForm = ({ recipe, onSubmit }) => {
       </div>
 
       <div className="form-group">
-        <label>Porciones:</label>
+        <label>Personas:</label>
         <input
           type="number"
           value={formData.servings}
