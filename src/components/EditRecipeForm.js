@@ -18,11 +18,14 @@ const EditRecipeForm = () => {
     servings: 1,
     category: '',
     comment: '',
-    image_path: ''
+    image_path: '',
+    tags: []
   });
 
   const [errors, setErrors] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
+  const [availableTags, setAvailableTags] = useState([]);
+  const [newTag, setNewTag] = useState('');
 
   const fetchRecipe = useCallback(async () => {
     try {
@@ -42,6 +45,18 @@ const EditRecipeForm = () => {
   useEffect(() => {
     fetchRecipe();
   }, [fetchRecipe]);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/tags/`);
+        setAvailableTags(response.data);
+      } catch (error) {
+        console.error('Error al cargar etiquetas:', error);
+      }
+    };
+    fetchTags();
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -161,6 +176,26 @@ const EditRecipeForm = () => {
         image_path: ''
       }));
     }
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+      setFormData({
+        ...formData,
+        tags: [...formData.tags, newTag.trim()]
+      });
+      if (!availableTags.includes(newTag.trim())) {
+        setAvailableTags([...availableTags, newTag.trim()]);
+      }
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData({
+      ...formData,
+      tags: formData.tags.filter(tag => tag !== tagToRemove)
+    });
   };
 
   if (loading) {
@@ -313,6 +348,67 @@ const EditRecipeForm = () => {
           required
         />
         {errors.category && <span className="error-message">{errors.category}</span>}
+      </div>
+
+      <div className="form-group">
+        <label>Etiquetas:</label>
+        <div className="tags-input-container">
+          <div className="tags-list">
+            {formData.tags && formData.tags.map(tag => (
+              <span key={tag} className="tag">
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="tag-remove"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="tag-input-wrapper">
+            <input
+              type="text"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              className="form-input"
+              placeholder="Nueva etiqueta"
+            />
+            <button
+              type="button"
+              onClick={handleAddTag}
+              className="btn btn-secondary"
+            >
+              Añadir
+            </button>
+          </div>
+          {availableTags.length > 0 && (
+            <div className="available-tags">
+              <p>Etiquetas existentes:</p>
+              <div className="tags-suggestions">
+                {availableTags.map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      if (!formData.tags.includes(tag)) {
+                        setFormData({
+                          ...formData,
+                          tags: [...formData.tags, tag]
+                        });
+                      }
+                    }}
+                    className="tag-suggestion"
+                    disabled={formData.tags.includes(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="form-group">
