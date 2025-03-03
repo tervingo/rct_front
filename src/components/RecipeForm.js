@@ -2,18 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL, CATEGORIES } from '../constants';
 
-const BACKEND_URL = 'https://recetarium-back.onrender.com';
-
-const CATEGORIES = [
-  "Aperitivos",
-  "Tapas y Pinchos",
-  "Entrantes",
-  "Primeros",
-  "Segundos",
-  "Guarniciones",
-  "Postres"
-];
 
 const RecipeForm = ({ recipe, onSubmit }) => {
   const [formData, setFormData] = useState({

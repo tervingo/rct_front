@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { BACKEND_URL } from '../constants';
 
-const BACKEND_URL = 'https://recetarium-back.onrender.com';
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { BACKEND_URL, CATEGORIES } from '../constants';
 
-const BACKEND_URL = 'https://recetarium-back.onrender.com';
 
 const EditRecipeForm = () => {
   const { id } = useParams();
@@ -340,13 +340,18 @@ const EditRecipeForm = () => {
 
       <div className="form-group">
         <label>Categoría:</label>
-        <input
-          type="text"
+        <select
           value={formData.category}
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           className={errors.category ? 'form-input error' : 'form-input'}
           required
-        />
+        >
+          {CATEGORIES.map(category => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
         {errors.category && <span className="error-message">{errors.category}</span>}
       </div>
 

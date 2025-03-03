@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { BACKEND_URL } from '../constants';
 
-const BACKEND_URL = 'https://recetarium-back.onrender.com';
 
 function RecipeDetail() {
   const { id } = useParams();
