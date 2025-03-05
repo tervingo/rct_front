@@ -32,7 +32,7 @@ const EditRecipeForm = () => {
       const response = await axios.get(`${BACKEND_URL}/recipes/${id}`);
       setFormData(response.data);
       if (response.data.image_path) {
-        setImagePreview(`${BACKEND_URL}${response.data.image_path}`);
+        setImagePreview(response.data.image_path);
       }
       setLoading(false);
     } catch (error) {

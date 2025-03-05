@@ -67,7 +67,7 @@ const RecipeList = () => {
             <div key={recipe.id} className="recipe-card">
               {recipe.image_path && (
                 <div className="recipe-image">
-                  <img src={`${BACKEND_URL}${recipe.image_path}`} alt={recipe.title} />
+                  <img src={recipe.image_path} alt={recipe.title} />
                 </div>
               )}
               <h3>{recipe.title}</h3>

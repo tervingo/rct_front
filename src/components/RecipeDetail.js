@@ -52,7 +52,7 @@ function RecipeDetail() {
     <div className="recipe-detail">
       {recipe.image_path && (
         <div className="recipe-detail-image">
-          <img src={`${BACKEND_URL}${recipe.image_path}`} alt={recipe.title} />
+          <img src={recipe.image_path} alt={recipe.title} />
         </div>
       )}
 
