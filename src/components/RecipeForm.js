@@ -28,10 +28,11 @@ const RecipeForm = ({ recipe, onSubmit }) => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/tags/');
+        const response = await axios.get(`${BACKEND_URL}/tags/`);
         setAvailableTags(response.data);
       } catch (error) {
         console.error('Error al cargar etiquetas:', error);
+        toast.error('Error al cargar las etiquetas existentes');
       }
     };
     fetchTags();
@@ -171,6 +172,13 @@ const RecipeForm = ({ recipe, onSubmit }) => {
         ...prev,
         image_path: ''
       }));
+    }
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    if (window.confirm('¿Estás seguro de que quieres cancelar? Los datos no guardados se perderán.')) {
+      navigate('/');
     }
   };
 
@@ -404,7 +412,7 @@ const RecipeForm = ({ recipe, onSubmit }) => {
         </button>
         <button 
           type="button" 
-          onClick={() => navigate('/')} 
+          onClick={handleCancel}
           className="btn btn-secondary"
         >
           Cancelar

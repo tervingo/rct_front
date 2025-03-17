@@ -198,6 +198,13 @@ const EditRecipeForm = () => {
     });
   };
 
+  const handleCancel = (e) => {
+    e.preventDefault();
+    if (window.confirm('¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.')) {
+      navigate('/');
+    }
+  };
+
   if (loading) {
     return <div className="loading">Cargando receta...</div>;
   }
@@ -453,12 +460,10 @@ const EditRecipeForm = () => {
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary">Guardar Cambios</button>
-        <button 
-          type="button" 
-          onClick={() => navigate('/')} 
-          className="btn btn-secondary"
-        >
+        <button type="submit" className="btn btn-primary">
+          Guardar
+        </button>
+        <button onClick={handleCancel} className="btn btn-secondary">
           Cancelar
         </button>
       </div>
