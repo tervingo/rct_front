@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-import { BACKEND_URL } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {

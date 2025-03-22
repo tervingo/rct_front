@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-import { BACKEND_URL } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
 import axiosInstance from '../utils/axios';
 

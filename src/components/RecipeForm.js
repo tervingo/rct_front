@@ -25,8 +25,7 @@ const RecipeForm = () => {
 
   const [availableTags, setAvailableTags] = useState([]);
   const [newTag, setNewTag] = useState('');
-  const [errors, setErrors] = useState({});
-  const [imagePreview, setImagePreview] = useState(null);
+  
 
   useEffect(() => {
     const loadRecipe = async () => {
