@@ -21,26 +21,28 @@ const RecipeDetail = () => {
         console.log('Datos de la receta:', response.data);
         
         if (response.data) {
-          setRecipe(response.data);
+          const recipeData = {
+            ...response.data,
+            id: response.data.id || response.data._id
+          };
+          setRecipe(recipeData);
         } else {
           console.log('No se recibieron datos de la receta');
           toast.error('No se encontró la receta');
         }
       } catch (error) {
         console.error('Error al cargar la receta:', error);
-        console.error('Detalles del error:', error.response?.data);
-        console.error('Estado de la respuesta:', error.response?.status);
         toast.error('Error al cargar la receta');
+        navigate('/');
       } finally {
         setIsLoading(false);
       }
     };
 
     if (id) {
-      console.log('ID de la receta a cargar:', id);
       loadRecipe();
     }
-  }, [id]);
+  }, [id, navigate]);
 
   useEffect(() => {
     console.log('Estado actual de recipe:', recipe);
@@ -71,10 +73,10 @@ const RecipeDetail = () => {
     <div className="recipe-detail">
       <div className="recipe-header">
         <h2>{recipe.title}</h2>
-        {isAuthenticated && (
+        {isAuthenticated && recipe && recipe.id && (
           <div className="recipe-admin-actions">
             <Link 
-              to={`/recipe/${recipe._id}/edit`}
+              to={`/recipes/${recipe.id}/edit`}
               className="btn btn-edit"
             >
               Editar

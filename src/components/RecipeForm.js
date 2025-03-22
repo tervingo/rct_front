@@ -24,8 +24,6 @@ const RecipeForm = () => {
   });
 
   const [availableTags, setAvailableTags] = useState([]);
-  const [newTag, setNewTag] = useState('');
-  
 
   useEffect(() => {
     const loadRecipe = async () => {
@@ -33,91 +31,99 @@ const RecipeForm = () => {
 
       setIsLoading(true);
       try {
-        console.log('Cargando receta con ID:', id); // Debug log
         const response = await axiosInstance.get(`/recipes/${id}`);
-        console.log('Datos recibidos:', response.data); // Debug log
-
         const recipe = response.data;
+        
         setFormData({
           title: recipe.title || '',
           comment: recipe.comment || '',
           description: recipe.description || '',
           ingredients: Array.isArray(recipe.ingredients) 
             ? recipe.ingredients.join('\n')
-            : '',
+            : recipe.ingredients || '',
           instructions: Array.isArray(recipe.instructions)
             ? recipe.instructions.join('\n')
-            : '',
+            : recipe.instructions || '',
           cooking_time: recipe.cooking_time || '',
           servings: recipe.servings || '',
           category: recipe.category || '',
           tags: Array.isArray(recipe.tags) 
-            ? Array.from(recipe.tags).join(', ')
-            : '',
+            ? recipe.tags.join(', ')
+            : recipe.tags || '',
           image_path: recipe.image_path || ''
         });
       } catch (error) {
         console.error('Error al cargar la receta:', error);
-        console.error('Detalles del error:', error.response?.data); // Debug log
         toast.error('Error al cargar la receta');
+        navigate('/');
       } finally {
         setIsLoading(false);
       }
     };
 
     loadRecipe();
-  }, [id]);
+  }, [id, navigate]);
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/tags/`);
         setAvailableTags(response.data);
+        console.log('Etiquetas disponibles:', availableTags);
       } catch (error) {
         console.error('Error al cargar etiquetas:', error);
         toast.error('Error al cargar las etiquetas existentes');
       }
     };
     fetchTags();
-  }, []);
+  }, [availableTags]);
 
   const validateForm = () => {
-    const newErrors = {};
+    let isValid = true;
 
     if (!formData.title.trim()) {
-      newErrors.title = 'El título es obligatorio';
+      toast.error('El título es obligatorio');
+      isValid = false;
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'La descripción es obligatoria';
+      toast.error('La descripción es obligatoria');
+      isValid = false;
     }
 
-    if (formData.ingredients.filter(i => i.trim()).length === 0) {
-      newErrors.ingredients = 'Se requiere al menos un ingrediente';
+    if (!formData.ingredients.trim()) {
+      toast.error('Se requiere al menos un ingrediente');
+      isValid = false;
     }
 
-    if (formData.instructions.filter(i => i.trim()).length === 0) {
-      newErrors.instructions = 'Se requiere al menos una instrucción';
+    if (!formData.instructions.trim()) {
+      toast.error('Se requiere al menos una instrucción');
+      isValid = false;
     }
 
-    if (formData.cooking_time <= 0) {
-      newErrors.cooking_time = 'El tiempo de cocción debe ser mayor que 0';
+    if (!formData.cooking_time || formData.cooking_time <= 0) {
+      toast.error('El tiempo de cocción debe ser mayor que 0');
+      isValid = false;
     }
 
-    if (formData.servings <= 0) {
-      newErrors.servings = 'El número de porciones debe ser mayor que 0';
+    if (!formData.servings || formData.servings <= 0) {
+      toast.error('El número de porciones debe ser mayor que 0');
+      isValid = false;
     }
 
-    if (!formData.category.trim()) {
-      newErrors.category = 'La categoría es obligatoria';
+    if (!formData.category) {
+      toast.error('La categoría es obligatoria');
+      isValid = false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     setIsSaving(true);
 
     try {
@@ -144,8 +150,6 @@ const RecipeForm = () => {
         image_path: formData.image_path || null
       };
 
-      console.log('Datos a enviar:', dataToSend); // Debug log
-
       if (id) {
         await axiosInstance.put(`/recipes/${id}`, dataToSend);
         toast.success('Receta actualizada correctamente');
@@ -157,95 +161,12 @@ const RecipeForm = () => {
       navigate('/');
     } catch (error) {
       console.error('Error al guardar:', error);
-      console.error('Detalles del error:', error.response?.data); // Debug log
       toast.error(
         error.response?.data?.detail?.[0]?.msg || 
         'Error al guardar la receta'
       );
     } finally {
       setIsSaving(false);
-    }
-  };
-
-  const handleIngredientChange = (index, value) => {
-    const newIngredients = [...formData.ingredients];
-    newIngredients[index] = value;
-    setFormData({ ...formData, ingredients: newIngredients });
-  };
-
-  const handleInstructionChange = (index, value) => {
-    const newInstructions = [...formData.instructions];
-    newInstructions[index] = value;
-    setFormData({ ...formData, instructions: newInstructions });
-  };
-
-  const handleAddTag = () => {
-    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData({
-        ...formData,
-        tags: [...formData.tags, newTag.trim()]
-      });
-      if (!availableTags.includes(newTag.trim())) {
-        setAvailableTags([...availableTags, newTag.trim()]);
-      }
-      setNewTag('');
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove) => {
-    setFormData({
-      ...formData,
-      tags: formData.tags.filter(tag => tag !== tagToRemove)
-    });
-  };
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validar el tipo de archivo
-    if (!file.type.startsWith('image/')) {
-      toast.error('Por favor, selecciona un archivo de imagen válido');
-      return;
-    }
-
-    // Crear preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
-
-    // Subir la imagen
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.post(`${BACKEND_URL}/upload-image/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setFormData(prev => ({
-        ...prev,
-        image_path: response.data.image_path
-      }));
-
-      toast.success('Imagen subida correctamente');
-    } catch (error) {
-      console.error('Error al subir la imagen:', error);
-      toast.error('Error al subir la imagen');
-    }
-  };
-
-  const handleRemoveImage = () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar la imagen?')) {
-      setImagePreview(null);
-      setFormData(prev => ({
-        ...prev,
-        image_path: ''
-      }));
     }
   };
 
