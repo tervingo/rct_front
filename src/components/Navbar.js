@@ -11,9 +11,9 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-left">
         <Link to="/" className="nav-brand">
-          <span>Recetarium</span>
-          <img src="/cuchara.jpg" alt="Recetarium" className="nav-logo" />
+          <span>Entre fogones</span>
         </Link>
+        <img src="/cuchara.jpg" alt="Recetarium" className="navbar-logo" />
       </div>
       <div className="nav-right">
         {isAuthenticated && (
@@ -31,7 +31,7 @@ const Navbar = () => {
           </>
         )}
         {!isAuthenticated && (
-          <Link to="/login" className="nav-link">Iniciar Sesión</Link>
+          <Link to="/login" className="nav-link">Administrar web</Link>
         )}
       </div>
     </nav>

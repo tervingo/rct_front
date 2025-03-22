@@ -24,6 +24,8 @@ const RecipeForm = () => {
   });
 
   const [availableTags, setAvailableTags] = useState([]);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   useEffect(() => {
     const loadRecipe = async () => {
@@ -177,6 +179,60 @@ const RecipeForm = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar el tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecciona un archivo de imagen válido');
+      return;
+    }
+
+    // Mostrar preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Subir imagen a Cloudinary a través de nuestro backend
+    setIsUploadingImage(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axiosInstance.post('/upload-image/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setFormData(prev => ({
+        ...prev,
+        image_path: response.data.url // Asumiendo que el backend devuelve la URL de Cloudinary
+      }));
+
+      toast.success('Imagen subida correctamente');
+    } catch (error) {
+      console.error('Error al subir la imagen:', error);
+      toast.error('Error al subir la imagen');
+      setImagePreview(null);
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar la imagen?')) {
+      setImagePreview(null);
+      setFormData(prev => ({
+        ...prev,
+        image_path: ''
+      }));
+    }
+  };
+
   if (isLoading) {
     return <div>Cargando...</div>;
   }
@@ -309,16 +365,54 @@ const RecipeForm = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="image_path">URL de la imagen:</label>
-        <input
-          type="text"
-          id="image_path"
-          name="image_path"
-          value={formData.image_path}
-          onChange={(e) => setFormData({ ...formData, image_path: e.target.value })}
-          className="form-input"
-          placeholder="Ruta de la imagen (opcional)"
-        />
+        <label>Imagen:</label>
+        <div className="image-upload-container">
+          {imagePreview || formData.image_path ? (
+            <div className="image-preview">
+              <img 
+                src={imagePreview || formData.image_path} 
+                alt="Vista previa" 
+                className="preview-image"
+              />
+              <button 
+                type="button" 
+                onClick={handleRemoveImage}
+                className="btn btn-danger remove-image-btn"
+              >
+                <i className="fas fa-trash"></i> Eliminar imagen
+              </button>
+            </div>
+          ) : (
+            <div className="upload-placeholder">
+              <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+              <button 
+                type="button"
+                onClick={() => document.getElementById('image-upload').click()}
+                className="btn btn-primary upload-label"
+                disabled={isUploadingImage}
+              >
+                {isUploadingImage ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i> Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-upload"></i> Seleccionar imagen
+                  </>
+                )}
+              </button>
+              <p className="upload-hint">
+                Formatos permitidos: JPG, PNG, GIF
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="form-actions">
