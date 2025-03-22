@@ -5,6 +5,8 @@ import 'react-multi-carousel/lib/styles.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { BACKEND_URL } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
+import axiosInstance from '../utils/axios';
 
 const CATEGORIES_ORDER = [
   ['Aperitivos', 'Tapas y Pinchos'],
@@ -18,6 +20,7 @@ const RecipeList = () => {
   const [loading, setLoading] = useState(true);
   const [itemsPerRow, setItemsPerRow] = useState(3);
   const containerRef = useRef(null);
+  const { isAuthenticated } = useAuth();
 
   // Calcular cuántas tarjetas caben en una fila
   useEffect(() => {
@@ -99,12 +102,31 @@ const RecipeList = () => {
           <span>👥 {recipe.servings} personas</span>
         </div>
         
-        <div className="recipe-card-actions">
-          <Link to={`/recipe/${recipe.id}`} className="btn btn-secondary">Ver</Link>
-          <Link to={`/recipe/${recipe.id}/edit`} className="btn btn-primary">Editar</Link>
-          <button onClick={() => handleDelete(recipe.id)} className="btn btn-danger">
-            Eliminar
-          </button>
+        <div className="recipe-actions">
+          <Link 
+            to={`/recipes/${recipe.id}`}
+            className="btn btn-view"
+            onClick={() => console.log('Navegando a receta:', recipe)}
+          >
+            Ver
+          </Link>
+          
+          {isAuthenticated && (
+            <>
+              <Link 
+                to={`/recipes/${recipe.id}/edit`}
+                className="btn btn-edit"
+              >
+                Editar
+              </Link>
+              <button 
+                onClick={() => handleDelete(recipe.id)}
+                className="btn btn-delete"
+              >
+                Eliminar
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -117,13 +139,8 @@ const RecipeList = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/recipes/`);
-      console.log('Respuesta recibida:', response.data);
-      if (!Array.isArray(response.data)) {
-        console.error('Los datos recibidos no son un array:', response.data);
-        toast.error('Formato de datos inválido del servidor');
-        return;
-      }
+      const response = await axiosInstance.get('/recipes/');
+      console.log('Recetas cargadas:', response.data); // Debug log
       setRecipes(response.data);
       setLoading(false);
     } catch (error) {
@@ -139,9 +156,9 @@ const RecipeList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta receta?')) {
       try {
-        await axios.delete(`${BACKEND_URL}/recipes/${id}`);
+        await axiosInstance.delete(`/recipes/${id}`);
+        setRecipes(recipes.filter(recipe => recipe.id !== id));
         toast.success('Receta eliminada correctamente');
-        fetchRecipes(); // Actualizar la lista
       } catch (error) {
         console.error('Error al eliminar la receta:', error);
         toast.error('Error al eliminar la receta');
@@ -156,9 +173,6 @@ const RecipeList = () => {
   return (
     <div className="recipe-list" ref={containerRef}>
       <h2 className="recipe-list-title">Lista de recetas</h2>
-      <Link to="/new" className="btn btn-primary add-recipe-btn">
-        Añadir Nueva Receta
-      </Link>
 
       {CATEGORIES_ORDER.map((categoryGroup, index) => {
         const categoryRecipes = getRecipesByCategories(categoryGroup);

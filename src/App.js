@@ -8,6 +8,11 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import EditRecipeForm from './components/EditRecipeForm';
+import Login from './components/Login';
+import { AuthProvider } from './contexts/AuthContext';
+import Navbar from './components/Navbar';
+import PrivateRoute from './components/PrivateRoute';
+import UserAdmin from './components/UserAdmin';
 
 function App() {
   const handleSubmit = async (formData) => {
@@ -44,51 +49,45 @@ function App() {
   };
 
   return (
-    <Router>
-      <div className="app">
-        <nav className="navbar">
-          <div className="navbar-brand">
-            <div className="navbar-logo-container">
-            Recetarium
-
-              <img 
-                src="/images/cuchara.png" 
-                alt="Cuchara" 
-                className="navbar-logo"
+    <AuthProvider>
+      <Router>
+        <div className="app">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<RecipeList />} />
+              <Route path="/recipes/:id" element={<RecipeDetail />} />
+              <Route 
+                path="/new" 
+                element={
+                  <PrivateRoute>
+                    <RecipeForm />
+                  </PrivateRoute>
+                } 
               />
-            </div>
-          </div>
-
-          <div className="navbar-links">
-            <Link to="/">Inicio</Link>
-            <Link to="/new">Nueva receta</Link>
-          </div>
-        </nav>
-
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<RecipeList />} />
-            <Route path="/new" element={<RecipeForm onSubmit={handleSubmit} />} />
-            <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route path="/recipe/:id/edit" element={<EditRecipeForm />} />
-          </Routes>
-        </main>
-
-        {/* Toast Container for notifications */}
-        <ToastContainer 
-          position="bottom-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </div>
-    </Router>
+              <Route 
+                path="/recipes/:id/edit"
+                element={
+                  <PrivateRoute>
+                    <RecipeForm />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/admin/users" 
+                element={
+                  <PrivateRoute>
+                    <UserAdmin />
+                  </PrivateRoute>
+                } 
+              />
+            </Routes>
+          </main>
+          <ToastContainer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
