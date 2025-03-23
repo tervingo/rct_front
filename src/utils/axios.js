@@ -6,18 +6,31 @@ const axiosInstance = axios.create({
 });
 
 // Log para ver las peticiones
-axiosInstance.interceptors.request.use(request => {
-  console.log('Realizando petición:', {
-    url: request.url,
-    method: request.method,
-    headers: request.headers
-  });
-  const token = localStorage.getItem('token');
-  if (token) {
-    request.headers.Authorization = `Bearer ${token}`;
+axiosInstance.interceptors.request.use(
+  (config) => {
+    console.log('Realizando petición:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers
+    });
+    // Usar solo sessionStorage
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Si los datos son FormData, asegurarse de que el Content-Type sea correcto
+    if (config.data instanceof FormData) {
+      config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return request;
-});
+);
+
 
 // Log para ver las respuestas
 axiosInstance.interceptors.response.use(
@@ -33,9 +46,10 @@ axiosInstance.interceptors.response.use(
       status: error.response?.status,
       data: error.response?.data
     });
-    if (error.response?.status === 401) {
-      // Si recibimos un 401, el token no es válido
+    if (error.response && error.response.status === 401) {
+      // Si hay error de autenticación, limpiar ambos storages
       localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       window.location.href = '/login';
     }
     return Promise.reject(error);

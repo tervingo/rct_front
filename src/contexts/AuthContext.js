@@ -1,94 +1,75 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-import { BACKEND_URL } from '../constants';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axiosInstance from '../utils/axios';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const checkAuth = async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        // Decodificar el token JWT para obtener la información
-        const tokenData = JSON.parse(atob(token.split('.')[1]));
-        console.log('Token decodificado:', tokenData);
-        
-        setIsAdmin(tokenData.is_admin);
-        setUser({ 
-          username: tokenData.sub,
-          is_admin: tokenData.is_admin 
-        });
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error checking auth:', error);
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setIsAdmin(false);
-        setUser(null);
-      }
-    }
-    setIsLoading(false);
-  };
 
   useEffect(() => {
-    checkAuth();
+    // Limpiar cualquier token existente en localStorage
+    localStorage.removeItem('token');
+    
+    // Solo verificar sessionStorage
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+      try {
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        setIsAdmin(tokenData.is_admin || false);
+      } catch (error) {
+        console.error('Error al decodificar el token:', error);
+        // Si hay error al decodificar, limpiar la sesión
+        sessionStorage.removeItem('token');
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+      }
+    }
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (formData) => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/token`, 
-        new URLSearchParams({
-          username,
-          password,
-        }), {
+      // Limpiar cualquier token existente antes de hacer login
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
+
+      const response = await axiosInstance.post('/token', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
 
       const { access_token } = response.data;
-      localStorage.setItem('token', access_token);
       
-      // Decodificar el token JWT para obtener la información
+      // Guardar solo en sessionStorage
+      sessionStorage.setItem('token', access_token);
+      
       const tokenData = JSON.parse(atob(access_token.split('.')[1]));
-      console.log('Token después de login:', tokenData);
-      
-      setIsAdmin(tokenData.is_admin);
-      setUser({ 
-        username: tokenData.sub,
-        is_admin: tokenData.is_admin 
-      });
+      setIsAdmin(tokenData.is_admin || false);
       setIsAuthenticated(true);
-      
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Error en la petición:', error.response?.data);
+      console.error('Error de login:', error);
       throw error;
     }
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
+    // Limpiar ambos storages por seguridad
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setIsAuthenticated(false);
     setIsAdmin(false);
-    setUser(null);
+    if (navigate) {
+      navigate('/');
+    }
   };
 
   return (
-    <AuthContext.Provider value={{
-      isAuthenticated,
-      isAdmin,
-      user,
-      login,
-      logout,
-      isLoading
-    }}>
-      {!isLoading && children}
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 };

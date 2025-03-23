@@ -13,11 +13,9 @@ import PrivateRoute from './components/PrivateRoute';
 import UserAdmin from './components/UserAdmin';
 
 function App() {
-
-
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div className="app">
           <Navbar />
           <main className="main-content">
@@ -53,8 +51,8 @@ function App() {
           </main>
           <ToastContainer />
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

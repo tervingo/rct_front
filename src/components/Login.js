@@ -16,7 +16,11 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await login(username, password);
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      await login(formData);
       toast.success('Inicio de sesión exitoso');
       const destination = location.state?.from?.pathname || '/';
       navigate(destination);

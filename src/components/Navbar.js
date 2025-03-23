@@ -1,11 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const navigate = useNavigate();
   
   console.log('Navbar estado:', { isAuthenticated, isAdmin, user });
+
+  const handleLogout = () => {
+    logout(navigate);
+  };
 
   return (
     <nav className="navbar">
@@ -25,7 +30,7 @@ const Navbar = () => {
               </Link>
             )}
             <span className="nav-user">Hola, {user?.username}</span>
-            <button onClick={logout} className="nav-link">
+            <button onClick={handleLogout} className="nav-link">
               Cerrar sesión
             </button>
           </>
