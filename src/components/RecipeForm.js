@@ -152,6 +152,8 @@ const RecipeForm = () => {
         image_path: formData.image_path || null
       };
 
+      console.log('Datos a enviar:', dataToSend);
+
       if (id) {
         await axiosInstance.put(`/recipes/${id}`, dataToSend);
         toast.success('Receta actualizada correctamente');
@@ -208,12 +210,17 @@ const RecipeForm = () => {
         },
       });
 
-      setFormData(prev => ({
-        ...prev,
-        image_path: response.data.url // Asumiendo que el backend devuelve la URL de Cloudinary
-      }));
+      console.log('Respuesta de subida de imagen:', response.data);
 
-      toast.success('Imagen subida correctamente');
+      if (response.data && response.data.url) {
+        setFormData(prev => ({
+          ...prev,
+          image_path: response.data.url
+        }));
+        toast.success('Imagen subida correctamente');
+      } else {
+        throw new Error('No se recibió la URL de la imagen');
+      }
     } catch (error) {
       console.error('Error al subir la imagen:', error);
       toast.error('Error al subir la imagen');
