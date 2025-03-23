@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BACKEND_URL, CATEGORIES } from '../constants';
+import { CATEGORIES } from '../constants';
 import axiosInstance from '../utils/axios';
 
 const RecipeForm = () => {
@@ -23,7 +22,10 @@ const RecipeForm = () => {
     image_path: ''
   });
 
+  const [newTag, setNewTag] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
+
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
@@ -49,11 +51,10 @@ const RecipeForm = () => {
           cooking_time: recipe.cooking_time || '',
           servings: recipe.servings || '',
           category: recipe.category || '',
-          tags: Array.isArray(recipe.tags) 
-            ? recipe.tags.join(', ')
-            : recipe.tags || '',
           image_path: recipe.image_path || ''
         });
+
+        setSelectedTags(recipe.tags || []);
       } catch (error) {
         console.error('Error al cargar la receta:', error);
         toast.error('Error al cargar la receta');
@@ -69,16 +70,15 @@ const RecipeForm = () => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/tags/`);
+        const response = await axiosInstance.get('/tags/');
         setAvailableTags(response.data);
-        console.log('Etiquetas disponibles:', availableTags);
       } catch (error) {
         console.error('Error al cargar etiquetas:', error);
         toast.error('Error al cargar las etiquetas existentes');
       }
     };
     fetchTags();
-  }, [availableTags]);
+  }, []);
 
   const validateForm = () => {
     let isValid = true;
@@ -121,6 +121,27 @@ const RecipeForm = () => {
     return isValid;
   };
 
+  const handleAddTag = () => {
+    const tagToAdd = newTag.trim();
+    if (tagToAdd && !selectedTags.includes(tagToAdd)) {
+      setSelectedTags([...selectedTags, tagToAdd]);
+      if (!availableTags.includes(tagToAdd)) {
+        setAvailableTags([...availableTags, tagToAdd]);
+      }
+      setNewTag('');
+    }
+  };
+
+  const handleTagClick = (tag) => {
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -144,11 +165,7 @@ const RecipeForm = () => {
         cooking_time: parseInt(formData.cooking_time),
         servings: parseInt(formData.servings),
         category: formData.category,
-        tags: formData.tags
-          ? formData.tags.split(',')
-              .map(tag => tag.trim())
-              .filter(tag => tag.length > 0)
-          : [],
+        tags: selectedTags,
         image_path: formData.image_path || null
       };
 
@@ -360,15 +377,65 @@ const RecipeForm = () => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="tags">Etiquetas (separadas por comas):</label>
-        <input
-          type="text"
-          id="tags"
-          name="tags"
-          value={formData.tags}
-          onChange={e => setFormData({...formData, tags: e.target.value})}
-          className="form-input"
-        />
+        <label>Etiquetas:</label>
+        <div className="tags-input-container">
+          <div className="selected-tags">
+            {selectedTags.map((tag, index) => (
+              <span key={index} className="tag">
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="remove-tag"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="tag-input-row">
+            <input
+              type="text"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+              placeholder="Nueva etiqueta"
+              className="tag-input"
+            />
+            <button
+              type="button"
+              onClick={handleAddTag}
+              className="btn btn-secondary"
+            >
+              Añadir
+            </button>
+          </div>
+        </div>
+        
+        {availableTags.length > 0 && (
+          <div className="available-tags">
+            <label className="available-tags-label">Etiquetas disponibles:</label>
+            <div className="tags-cloud">
+              {availableTags
+                .filter(tag => !selectedTags.includes(tag))
+                .map((tag, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => handleTagClick(tag)}
+                    className="available-tag-btn"
+                  >
+                    {tag}
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="form-group">
@@ -433,7 +500,7 @@ const RecipeForm = () => {
         <button 
           type="button"
           onClick={handleCancel}
-          className="btn btn-secondary"
+          className="btn btn-delete"
           disabled={isSaving}
         >
           Cancelar
