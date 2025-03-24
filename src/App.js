@@ -11,6 +11,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 import UserAdmin from './components/UserAdmin';
+import Footer from './components/Footer';
+import CookieBanner from './components/CookieBanner';
+import CookiePolicy from './components/CookiePolicy';
 
 function App() {
   return (
@@ -47,9 +50,12 @@ function App() {
                   </PrivateRoute>
                 } 
               />
+              <Route path="/cookies" element={<CookiePolicy />} />
             </Routes>
           </main>
+          <Footer />
           <ToastContainer />
+          <CookieBanner />
         </div>
       </AuthProvider>
     </Router>

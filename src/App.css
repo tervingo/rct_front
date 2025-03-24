@@ -974,3 +974,111 @@ button.nav-link {
 .available-tag-btn:hover {
   opacity: 1;
 }
+
+.footer-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-content-item {
+  font-size: 1rem;
+  margin-right: 3rem;
+}
+
+.footer {
+  background-color: lightgray;
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.mail-link {
+  color: #333;
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.mail-link:hover {
+  color: var(--primary-color);
+}
+
+/* Estilos para el banner de cookies */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.cookie-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cookie-content p {
+  margin: 0;
+}
+
+.cookie-content a {
+  color: #4CAF50;
+  text-decoration: underline;
+}
+
+.cookie-accept-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cookie-accept-btn:hover {
+  background-color: #45a049;
+}
+
+/* Estilos para la página de política de cookies */
+.cookie-policy {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.cookie-policy h1 {
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+.cookie-policy section {
+  margin-bottom: 2rem;
+}
+
+.cookie-policy h2 {
+  color: var(--secondary-color);
+  margin-bottom: 1rem;
+}
+
+.cookie-policy h3 {
+  color: var(--text-color);
+  margin: 1rem 0;
+}
+
+.cookie-policy p {
+  line-height: 1.6;
+  color: #666;
+}
