@@ -39,6 +39,26 @@ const CookiePolicy = () => {
       </section>
 
       <section>
+        <h2>Google Analytics</h2>
+        <p>
+          Utilizamos Google Analytics para analizar el uso de nuestro sitio web. 
+          Google Analytics recopila información sobre el uso del sitio web mediante cookies. 
+          La información recopilada relacionada con nuestro sitio web se utiliza para crear 
+          informes sobre el uso del sitio web.
+        </p>
+        <p>
+          La información recopilada incluye: 
+        </p>
+        <ul>
+          <li>Tipo de navegador y versión</li>
+          <li>Sistema operativo</li>
+          <li>Páginas que visita</li>
+          <li>Tiempo de permanencia en las páginas</li>
+          <li>País de origen del visitante</li>
+        </ul>
+      </section>
+
+      <section>
         <h2>Más información</h2>
         <p>
           Para cualquier consulta relacionada con nuestra política de cookies, puede contactarnos

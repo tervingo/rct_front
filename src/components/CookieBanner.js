@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { initGA } from '../utils/analytics';
 
 const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const cookiesAccepted = localStorage.getItem('cookiesAccepted');
-    if (!cookiesAccepted) {
+    if (cookiesAccepted) {
+      initGA(); // Inicializar GA si las cookies ya fueron aceptadas
+    } else {
       setIsVisible(true);
     }
   }, []);
@@ -14,6 +17,7 @@ const CookieBanner = () => {
   const handleAccept = () => {
     localStorage.setItem('cookiesAccepted', 'true');
     setIsVisible(false);
+    initGA(); // Inicializar GA cuando el usuario acepta las cookies
   };
 
   if (!isVisible) return null;

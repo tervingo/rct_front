@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
@@ -14,48 +14,68 @@ import UserAdmin from './components/UserAdmin';
 import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import CookiePolicy from './components/CookiePolicy';
+import { initGA, logPageView } from './utils/analytics';
+
+// Componente separado para el tracking de Analytics
+function AppContent() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Trackear cambios de página
+    logPageView();
+  }, [location]);
+
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<RecipeList />} />
+        <Route path="/recipes/:id" element={<RecipeDetail />} />
+        <Route 
+          path="/new" 
+          element={
+            <PrivateRoute>
+              <RecipeForm />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/recipes/:id/edit"
+          element={
+            <PrivateRoute>
+              <RecipeForm />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin/users" 
+          element={
+            <PrivateRoute>
+              <UserAdmin />
+            </PrivateRoute>
+          } 
+        />
+        <Route path="/cookies" element={<CookiePolicy />} />
+      </Routes>
+      <Footer />
+      <CookieBanner />
+    </>
+  );
+}
 
 function App() {
+  useEffect(() => {
+    // Inicializar GA solo una vez
+    initGA();
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
         <div className="app">
-          <Navbar />
-          <main className="main-content">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<RecipeList />} />
-              <Route path="/recipes/:id" element={<RecipeDetail />} />
-              <Route 
-                path="/new" 
-                element={
-                  <PrivateRoute>
-                    <RecipeForm />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="/recipes/:id/edit"
-                element={
-                  <PrivateRoute>
-                    <RecipeForm />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="/admin/users" 
-                element={
-                  <PrivateRoute>
-                    <UserAdmin />
-                  </PrivateRoute>
-                } 
-              />
-              <Route path="/cookies" element={<CookiePolicy />} />
-            </Routes>
-          </main>
-          <Footer />
+          <AppContent />
           <ToastContainer />
-          <CookieBanner />
         </div>
       </AuthProvider>
     </Router>
