@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     // Limpiar cualquier token existente en localStorage
@@ -18,12 +19,16 @@ export const AuthProvider = ({ children }) => {
       try {
         const tokenData = JSON.parse(atob(token.split('.')[1]));
         setIsAdmin(tokenData.is_admin || false);
+        setUser({
+          username: tokenData.sub
+        });
       } catch (error) {
         console.error('Error al decodificar el token:', error);
         // Si hay error al decodificar, limpiar la sesión
         sessionStorage.removeItem('token');
         setIsAuthenticated(false);
         setIsAdmin(false);
+        setUser(null);
       }
     }
   }, []);
@@ -48,6 +53,9 @@ export const AuthProvider = ({ children }) => {
       const tokenData = JSON.parse(atob(access_token.split('.')[1]));
       setIsAdmin(tokenData.is_admin || false);
       setIsAuthenticated(true);
+      setUser({
+        username: tokenData.sub
+      });
       return true;
     } catch (error) {
       console.error('Error en la petición:', error.response?.data);
@@ -62,13 +70,14 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem('token');
     setIsAuthenticated(false);
     setIsAdmin(false);
+    setUser(null);
     if (navigate) {
       navigate('/');
     }
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

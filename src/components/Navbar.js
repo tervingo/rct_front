@@ -7,6 +7,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   
   console.log('Navbar estado:', { isAuthenticated, isAdmin, user });
+  console.log('Navbar user object:', user);
 
   const handleLogout = () => {
     logout(navigate);
@@ -16,10 +17,16 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="nav-left">
         <Link to="/" className="nav-brand">
-          <span>Entre fogones</span>
+          <span>Recetas del grillo</span>
         </Link>
-        <img src="/cuchara.jpg" alt="Recetarium" className="navbar-logo" />
+        <img src="/cuchara.jpg" alt="Recetarium" className="navbar-cuchara" />
+        <img src="/grillo.png" alt="Grillo" className="navbar-grillo" />
       </div>
+      <div className="navbar-cita-container"> 
+        <div className="navbar-cita">"De lo que come el grillo, poquillo"</div>
+        <div className="navbar-cita-explicacion">Chascarrillo popular del que tampoco hay que hacer mucho caso</div>
+      </div>
+
       <div className="nav-right">
         {isAuthenticated && (
           <>
