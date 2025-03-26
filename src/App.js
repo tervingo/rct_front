@@ -15,6 +15,7 @@ import Footer from './components/Footer';
 import CookieBanner from './components/CookieBanner';
 import CookiePolicy from './components/CookiePolicy';
 import { initGA, logPageView } from './utils/analytics';
+import SideMenu from './components/SideMenu';
 
 // Componente separado para el tracking de Analytics
 function AppContent() {
@@ -27,7 +28,6 @@ function AppContent() {
 
   return (
     <>
-      <Navbar />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<RecipeList />} />
@@ -74,7 +74,13 @@ function App() {
     <Router>
       <AuthProvider>
         <div className="app">
-          <AppContent />
+          <Navbar />
+          <div className="app-container">
+            <SideMenu />
+            <main className="main-content-with-sidebar">
+              <AppContent />
+            </main>
+          </div>
           <ToastContainer />
         </div>
       </AuthProvider>
