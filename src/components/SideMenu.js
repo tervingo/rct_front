@@ -62,6 +62,7 @@ const SideMenu = () => {
 
   return (
     <div className="side-menu">
+      <h2 className="side-menu-title">Recetas</h2>
       <nav className="category-nav">
         {Object.entries(categories).map(([category, recipes]) => (
           <div key={category} className="category-section">
