@@ -5,7 +5,6 @@ import RecipeForm from './components/RecipeForm';
 import RecipeList from './components/RecipeList';
 import RecipeDetail from './components/RecipeDetail';
 import 'react-toastify/dist/ReactToastify.css';
-import './App.css';
 import Login from './components/Login';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
@@ -16,6 +15,19 @@ import CookieBanner from './components/CookieBanner';
 import CookiePolicy from './components/CookiePolicy';
 import { initGA, logPageView } from './utils/analytics';
 import SideMenu from './components/SideMenu';
+
+// Importar todos los archivos CSS
+import './styles/base.css';
+import './styles/nav.css';
+import './styles/recipe-card.css';
+import './styles/recipe-detail.css';
+import './styles/forms.css';
+import './styles/login.css';
+import './styles/admin.css';
+import './styles/footer.css';
+import './styles/cookie.css';
+import './styles/sidebar.css';
+import './styles/tags.css'; // Añadido para manejar los estilos de tags
 
 // Componente separado para el tracking de Analytics
 function AppContent() {

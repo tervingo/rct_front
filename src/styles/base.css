@@ -1,0 +1,54 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: dimgrey;
+    --background-color: #404040;
+    --text-color: #2c3e50;
+    --border-color: #e9ecef;
+  }
+  
+  .app {
+    min-height: 100vh;
+    background-color: var(--background-color);
+  }
+  
+  .main-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+    text-decoration: none;
+  }
+  
+  .btn-secondary {
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+  }
+  
+  .btn-danger {
+    background-color: navy;
+    color: white;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+  }
+  
+  .error {
+    color: #dc3545;
+  }
