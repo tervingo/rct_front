@@ -61,6 +61,10 @@ const RecipeDetail = () => {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (isLoading) {
     return <div className="loading">Cargando...</div>;
   }
@@ -149,6 +153,12 @@ const RecipeDetail = () => {
       </div>
 
       <div className="recipe-footer">
+        <button 
+          onClick={handlePrint}
+          className="btn btn-print"
+        >
+          <i className="fas fa-print"></i> Imprimir
+        </button>
         <button 
           onClick={() => navigate('/')}
           className="btn btn-secondary"

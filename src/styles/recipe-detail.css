@@ -125,6 +125,28 @@
     text-decoration: none;
     font-size: 1rem;
   }
+
+  .btn-print {
+    background-color: #007bff;
+    color: white;
+    margin-right: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-print:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #545b62;
+  }
   
   /* Vista previa de imagen */
   .image-preview {
@@ -186,5 +208,72 @@
   
     .recipe-image-container {
       width: 100%;
+    }
+  }
+  
+  /* Estilos para impresión */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    .recipe-detail, .recipe-detail * {
+      visibility: visible;
+    }
+    
+    .recipe-detail {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 0;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    
+    /* Ocultar elementos que no se necesitan en impresión */
+    .recipe-admin-actions,
+    .recipe-footer,
+    .btn {
+      display: none !important;
+    }
+    
+    /* Optimizar imagen para impresión */
+    .recipe-image {
+      max-width: 300px;
+      max-height: 200px;
+    }
+    
+    /* Optimizar texto para impresión */
+    .recipe-detail {
+      font-size: 12pt;
+      line-height: 1.4;
+    }
+    
+    .recipe-header h2 {
+      font-size: 18pt;
+      margin-bottom: 10pt;
+    }
+    
+    .recipe-section h3 {
+      font-size: 14pt;
+      margin-top: 15pt;
+      margin-bottom: 8pt;
+    }
+    
+    /* Evitar saltos de página dentro de las secciones */
+    .recipe-section {
+      page-break-inside: avoid;
+    }
+    
+    /* Asegurar que ingredientes e instrucciones no se corten */
+    .recipe-section ul,
+    .recipe-section ol {
+      page-break-inside: auto;
+    }
+    
+    .recipe-section li {
+      page-break-inside: avoid;
+      margin-bottom: 3pt;
     }
   }
